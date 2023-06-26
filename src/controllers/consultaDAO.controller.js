@@ -12,7 +12,7 @@ export const crearConsulta = async (req, res) => {
     const newConsulta = await Consulta.create({
       pacienteId,
       medicoId,
-      fecha
+      fecha,
     });
     console.log(newConsulta);
     const id_consulta = newConsulta.getDataValue("id");
@@ -46,26 +46,31 @@ export const crearConsulta = async (req, res) => {
 export const getConsulta = async (req, res) => {
   // http://localhost:4000/buscar?especialidad=esp1&idMedico=3&paciente=4
   try {
-    const especialidad = req.query.especialidad;
-    const medicoId = req.query.medicoId;
-    const pacienteId = req.query.pacienteId;
-    const fecha= req.query.fecha;
+    const especialidad = req.query.especialidad || undefined;
+    const medicoId = req.query.medicoId || undefined;
+    const pacienteId = req.query.pacienteId || undefined;
+    const fecha = req.query.fecha || undefined;
 
-    //traer el nombre y el apellido del paciente y del doctor con sus respectivos id
+    let filtro = {};
+    let filtro2 = {};
+    if (especialidad !== undefined) {
+      filtro2 = { especialidad: { [Op.eq]: especialidad } };
+    }
+    if (medicoId !== undefined) {
+      filtro.medicoId = medicoId;
+    }
+    if (pacienteId !== undefined) {
+      filtro.pacienteId = pacienteId;
+    }
+    if (fecha !== undefined) {
+      filtro.fecha = fecha;
+    }
 
-    /*     const consultaPaciente = await Paciente.findAll({
-      where: {pacienteId}
-    })
-
-    const consultaMedico = await Medico.findAll({
-      where: {medicoId}
-    }) */
-
-    const newConsulta= await Consulta.findAll({
-      where: {pacienteId, medicoId, fecha},
-      include: [ConsultaDetalle]
-    })
-    res.send(newConsulta)
+    const newConsulta = await Consulta.findAll({
+      where: filtro,
+      include: [ConsultaDetalle, Paciente, { model: Medico, where: filtro2 }],
+    });
+    res.send(newConsulta);
   } catch (error) {
     return res.status(500).json({ Message: error.message });
   }
