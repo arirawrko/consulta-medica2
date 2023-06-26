@@ -11,7 +11,7 @@ const router = Router();
 
 //rutas
 
-router.get("/consulta/buscar/:id1/:id2", getConsulta);
+router.get("/consulta/buscar", getConsulta);
 router.post("/consulta", crearConsulta);
 
 router.get('/registro', async (req, res) => {

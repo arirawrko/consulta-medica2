@@ -16,6 +16,14 @@ export const Consulta = sequelize.define(
         return this.getDataValue("id");
       },
     },
+    fecha: {
+      type: DataTypes.DATEONLY,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: false,
   }
 );
 
