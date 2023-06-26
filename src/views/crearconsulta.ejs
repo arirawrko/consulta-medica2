@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sistema Reservas</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!--<link rel="stylesheet" href="/resources/demos/style.css">-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/f90d3bf50d.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <%- include('general/cabecera'); %>
+
+        <section id="conceptoUP" class="mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>
+                                    Crear Consulta
+                                </h4>
+                            </div>
+                            <form id="fmrReserva" class="was-validated" method="post">
+                                <div class="modal-body">
+                                    <input type="hidden" value="1">
+
+                                    <div class="form-group">
+                                        <label for="fecha">Fecha</label>
+                                        <input type="text" class="form-control" style="width: 200px;" 
+                                               name="fecha" id="fecha">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <h5>Datos del Cliente</h5>
+                                    </div>
+                                    <div class="form-row">
+                                      <div class="form-group col-md-4"> 
+                                        <label for="cedula">Cédula</label>
+                                        <input type="text" value="" class="form-control" name="cedula" id="cedula"
+                                            required>
+                                      </div>    
+                                      <div class="form-group col-md-4">
+                                        <label for="nombre">Nombre</label>
+                                        <input type="text" value="" class="form-control" name="nombre" id="nombre"
+                                            required>
+                                      </div>
+                                      <div class="form-group col-md-4">
+                                        <label for="apellido">Apellido</label>
+                                        <input type="text" value="" class="form-control" name="apellido" id="apellido"
+                                            required>
+                                    </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <h5 style="display: inline;">Detalle Consulta</h5>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <button type="button" class="btn btn-primary">
+                                                agregar
+                                            </button>
+                                          </div>
+                                    </div>
+
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="btnCrearReserva" class="btn btn-primary" type="button">Guardar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <%- include('general/piePagina'); %>
+
+
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+                integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+                crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $("#btnCrearReserva").on("click", function (event) {
+                        event.preventDefault();
+
+                        var cant_personas = $("#cantidad_personas").val();
+                        var f_fecha           = $("#fecha").val();
+                        var restauran_id      = $("#restauranId").val();
+                        var mesa_id           = $("#mesaId").val();
+                        var hora              = $("#horario").val();
+                        var ci                = $("#cedula").val();
+                        var nombre            = $("#nombre").val();
+                        var apellido          = $("#apellido").val();
+
+                        var data = 
+                        {                            
+                            restauranteId: restauran_id,
+                            mesaId: mesa_id,
+                            cantidad_personas: cant_personas,
+                            fecha:  f_fecha,
+                            horario: hora,                           
+                            cedula: ci,
+                            nombre: nombre,
+                            apellido: apellido
+                        };
+
+                        dataToSend = JSON.stringify(data);
+                        console.log(dataToSend);
+
+                        $.ajax({
+                            type: "POST",
+                            contentType: "application/json; charset=UTF-8",
+                            url: "./reserva",
+                            data: dataToSend,
+                            dataType: "json"
+                        }).done(function (data) {
+                            console.log(JSON.stringify(data));
+                            if(data.status == "Exito"){
+                                window.alert("Reserva Generada: "+data.status);
+                            }else{
+                                window.alert("Error: "+data.sms);
+                            }
+                        });
+
+                    });
+
+
+                    console.log("Hola Mundo");
+                    //c.datepicker("option", "dateFormat", "yy-mm-dd");
+                    $("#fecha").datepicker({ dateFormat: "yy-mm-dd" });
+                    $("#fecha").datepicker( "setDate", "2023-06-25" );
+
+                    $("#restauranId").on("change", function () {
+
+                        let idRest = $("#restauranId").val();
+                        console.log("X: " + idRest);
+
+
+                        $.ajax(
+                            {
+                                type: 'GET',
+                                dataType: 'json',
+                                url: "http://localhost:4000/mesa/restaurante/" + idRest,
+                                success: function (data) {
+
+                                    var rowhtml = "";
+                                    data.forEach(
+                                        function (row, index) {
+                                            rowhtml += "<option value='" + row.id + "'>" + row.nombre +
+                                                " | Capacidad: " + row.capacidad + " | Planta: " + row.planta + "</option>";
+                                            //console.log("#" + (index + 1) + " --> " + JSON.stringify(row) + " <--");
+
+                                        }
+                                    );
+                                    $("#mesaId").html(rowhtml);
+
+                                }
+                            }
+                        );
+                    });
+
+                    $("#cedula").on("change", function () {
+                        let cedula = $(this).val();
+
+                        $.ajax(
+                            {
+                                type: 'GET',
+                                dataType: 'json',
+                                url: "http://localhost:4000/clienteByCi/" + cedula,
+                                success: function (data) {
+
+                                    if (data.cedula == "NoExiste") {
+                                        console.log("Cliente NO EXISTE");
+                                        $("#nombre").val("");
+                                        $("#apellido").val("");
+                                        $("#nombre").attr("readonly", false);
+                                        $("#apellido").attr("readonly", false);
+                                    } else {
+                                        $("#nombre").val(data.nombre);
+                                        $("#apellido").val(data.apellido);
+                                        $("#nombre").attr("readonly", true);
+                                        $("#apellido").attr("readonly", true);
+                                    }
+
+                                }
+                            }
+                        );
+
+
+                    });
+
+                });
+            </script>
+
+
+</body>
+
+</html>

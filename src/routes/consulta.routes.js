@@ -14,4 +14,9 @@ const router = Router();
 router.get("/consulta/buscar/:id1/:id2", getConsulta);
 router.post("/consulta", crearConsulta);
 
+router.get('/registro', async (req, res) => {
+    
+  res.render("crearconsulta");  
+ });
+
 export default router;
