@@ -157,7 +157,7 @@
                         }).done(function (data) {
                             console.log(JSON.stringify(data));
                             if(data.status == "Exito"){
-                                window.alert("Status Operación: "+data.status+" | ID CONSULTA: "+data.id);
+                                window.alert("Status Operación: "+data.status+" | ID CONSULTA: "+data.consulta.id);
                                 window.location.href = "./registro";
                             }else{
                                 window.alert("Error: "+data.Message);
@@ -171,7 +171,7 @@
                     console.log("Hola Mundo");
                     //c.datepicker("option", "dateFormat", "yy-mm-dd");
                     $("#fecha").datepicker({ dateFormat: "yy-mm-dd" });
-                    $("#fecha").datepicker( "setDate", "2023-06-25" );
+                    $("#fecha").datepicker( "setDate", "2023-06-26" );
 
                     
                     $("#pacienteId").on("change", function(){

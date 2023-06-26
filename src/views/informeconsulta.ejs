@@ -35,37 +35,36 @@
                     <div class="col-md-12">
                         <form>
                             <div class="form-group">
-                                <label for="metodo">Método de Listado</label>
-                                <select class="form-control" id="metodo" name="metodo">
+                                <label for="medicoId">Médico</label>
+                                <select class="form-control" id="medicoId" name="medicoId">
                                     <option value="0">Seleccionar</option>
-                                    <option value="restaurante">Restaurante</option>
-                                    <option value="fecha">Fecha</option>
-                                    <option value="cliente">Cliente</option>
+                                    <% rows_medico.forEach( (row)=> { %>
+                                        <option value="<%=row.id %>">
+                                            CI: <%=row.cedula %> | Nombre: <%=row.nombre %> Apellido: <%=row.apellido %>
+                                        </option>
+                                    <%}) %>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="restauranId">Restaurante</label>
-                                <select class="form-control" id="restauranId" name="restauranId">
+                                <label for="pacienteId">Paciente</label>
+                                <select class="form-control" id="pacienteId" name="pacienteId">
                                     <option value="0">Seleccionar</option>
-                                    <% rows_restaurante.forEach( (row)=> { %>
+                                    <% rows_paciente.forEach( (row)=> { %>
                                         <option value="<%=row.id %>">
-                                            <%=row.nombre %>
+                                            CI: <%=row.cedula %> | Nombre: <%=row.nombre %> Apellido: <%=row.apellido %>
                                         </option>
                                         <%}) %>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="fecha">Fecha</label>
-                                <input type="text" value="" class="form-control" name="fecha" id="fecha">
+                                <input type="text" class="form-control" name="fecha" id="fecha">
                             </div>
-                            <select class="form-control" id="clienteId" name="clienteId">
-                                <option value="0">Seleccionar</option>
-                                <% rows_cliente.forEach( (row)=> { %>
-                                    <option value="<%=row.id %>">
-                                        <%=row.nombre %>
-                                            <%=row.apellido %>
-                                    </option>
-                                    <%}) %>
+                            <select class="form-control" id="especialidad" name="especialidad">
+                                <option value="0">Seleccionar</option>                               
+                                <option value="Otorrinolaringólogo">Otorrinolaringólogo</option>
+                                <option value="Pediatra">Pediatra</option>                                                             
+                                <option value="Clínico">Clínico</option>    
                             </select>
                     </div>
                     <div class="modal-footer">
@@ -88,13 +87,13 @@
                             <table class="table table-striped">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th>MESA</th>
+                                        <th>ID</th>
                                         <th>FECHA</th>
-                                        <th>Cliente</th>
-                                        <th>CANTIDAD</th>
+                                        <th>PACIENTE</th>
+                                        <th>MÉDICO</th>
                                     </tr>
                                 </thead>
-                                <tbody id="row_reserva">
+                                <tbody id="row_consulta">
 
                                 </tbody>
                             </table>
@@ -124,60 +123,69 @@
             <script>
                 $(document).ready(function () {
                     $("#btnBuscar").on("click", function (event) {
-                        let metodo = $("#metodo").val();
-                        let url_get = "./buscar/reserva/";
+                        
+                        let url_get = "./consulta/buscar";
 
+                        let medicoId   = $("#medicoId").val();
+                        let pacienteId = $("#pacienteId").val();
+                        let fecha      = $("#fecha").val();
+                        let especialidad = $("#especialidad").val();
+                        
+                        let query = "";
 
-                        if (metodo == "0") {
-                            window.alert("Seleccione el método y luego especifique el valor");
-                            return;
+                        if(medicoId !== "0"){
+                            if(query === "")
+                                query = query + "medicoId="+medicoId;
+                            else
+                            query = query + "&medicoId="+medicoId;    
                         }
 
-                        if (metodo == "restaurante") {
-                            if ($("#restauranId").val() == "0") {
-                                window.alert("Especifíque restaurante ID");
-                                return;
-                            }
-
-                            url_get = url_get + metodo + "/" + $("#restauranId").val();
-                        } else if (metodo == "fecha") {
-                            if ($("#fecha").val() == "") {
-                                window.alert("Favor especificar fecha");
-                                return;
-                            }
-
-                            url_get = url_get + metodo + "/" + $("#fecha").val();
-                        } else if (metodo == "cliente") {
-                            if ($("#clienteId").val() == "0") {
-                                window.alert("Especifíque el Cliente ID");
-                                return;
-                            }
-
-                            url_get = url_get + metodo + "/" + $("#clienteId").val();
+                        if(pacienteId !== "0"){
+                            if(query === "")
+                                query = query + "pacienteId="+pacienteId;
+                            else
+                            query = query + "&pacienteId="+pacienteId;    
                         }
 
+                        if(fecha !== ""){
+                            if(query === "")
+                                query = query + "fecha="+fecha;
+                            else
+                                query = query + "&fecha="+fecha;    
+                        }
 
-                        console.log("url_" + url_get);
+                        if(especialidad !== "0"){
+                            if(query === "")
+                                query = query + "especialidad="+especialidad;
+                            else
+                            query = query + "&especialidad="+especialidad;    
+                        }
+
+                        if(query !== ""){
+                            query = "?"+query;
+                        }
+
+                        console.log("url_" + url_get + query);
 
                         $.ajax({
                             type: "GET",
-                            url: url_get,
+                            url: url_get+query,
                             dataType: "json"
                         }).done(function (data) {
-                            console.log(JSON.stringify(data));
+                            //console.log(JSON.stringify(data));
 
                             var rowhtml = "";
                             data.forEach(
                                 function (row, index) {
                                     rowhtml += "<tr>";
-                                    rowhtml += "<td>" + row.mesa.nombre + "</td>";
+                                    rowhtml += "<td>" + row.id + "</td>";
                                     rowhtml += "<td>" + row.fecha + "</td>";
-                                    rowhtml += "<td>" + row.cliente.nombre + "</td>";
-                                    rowhtml += "<td>" + row.cantidadPersonas + "</td>";
+                                    rowhtml += "<td>" + row.paciente.nombre + " " + row.paciente.apellido + "</td>";
+                                    rowhtml += "<td>" + row.medico.nombre + " " + row.medico.apellido + "</td>";
                                     rowhtml += "/<tr>";
                                 }
                             );
-                            $("#row_reserva").html(rowhtml);
+                            $("#row_consulta").html(rowhtml);
 
                         });
 
@@ -186,6 +194,7 @@
 
 
                     $("#fecha").datepicker({ dateFormat: "yy-mm-dd" });
+                    $("#fecha").datepicker( "setDate", "2023-06-26" );
 
                 });
             </script>
